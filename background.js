@@ -36,16 +36,17 @@ chrome.runtime.onInstalled.addListener(() => {
             console.log('got the active tab id: ', tab);
 
             // get stream id
-            const { streamId, options } = await new Promise((resolve) => {
-                chrome.desktopCapture.chooseDesktopMedia(
-                  ['tab', 'audio'],
-                  tab,
-                  async (streamId, options) => {
-                    resolve({ streamId, options });
-                  }
-                );
-            }).catch((err) => console.error(err));
-            console.log('got stream id: ', streamId, ' and option: ', options);
+            // const { streamId, options } = await new Promise((resolve) => {
+            //     chrome.desktopCapture.chooseDesktopMedia(
+            //       ['tab', 'audio'],
+            //       tab,
+            //       async (streamId, options) => {
+            //         resolve({ streamId, options });
+            //       }
+            //     );
+            // }).catch((err) => console.error(err));
+            // console.log('got stream id: ', streamId, ' and option: ', options);
+            streamId = 1;
             
             // send stream id back to context
             chrome.tabs.sendMessage(tab.id, {command: "background2content_streamId", streamId: streamId}, function(response) {

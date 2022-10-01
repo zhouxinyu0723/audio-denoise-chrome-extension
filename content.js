@@ -1,4 +1,3 @@
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
 chrome.runtime.onMessage.addListener(
     async function(request, sender, sendResponse) {
         console.log(sender.tab ?
@@ -8,40 +7,46 @@ chrome.runtime.onMessage.addListener(
         if (request.command === "background2content_streamId"){
             console.log("background2content streamId success: ", request.streamId);
 
-
             streamId = request.streamId;
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                  mandatory: {
-                    chromeMediaSource: 'screen',
-                    chromeMediaSourceId: streamId,
-                  },
-                },
-                audio: {
-                  mandatory: {
-                    chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: streamId,
-                  },
-                },
-              });
-              stream.removeTrack(stream.getVideoTracks()[0]);
-              console.log(stream.getTracks())
-              console.log(stream.getTracks()[0]);
-              console.log(stream.getTracks()[0].getSettings());
+
+            const stream = document.querySelector("video")
               //
-              audioContext = new AudioContext({
-                latencyHint: 'interactive',
-                sampleRate: 48000,
-                });
-              audioContext.latencyHint = "playback";
-              stream2audioContext = audioContext.createMediaStreamSource(stream);
-              gainNode = audioContext.createGain();
-              gainNode.gain.setValueAtTime(
-                -1,
+            const audioContext = new AudioContext({
+            latencyHint: 'interactive',
+            sampleRate: 48000,
+            });
+            audioContext.latencyHint = "playback";
+            const stream2audioContext = audioContext.createMediaElementSource(stream);
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(
+                0.1,
                 audioContext.currentTime
-              );
-              stream2audioContext.connect(gainNode);
-              gainNode.connect(audioContext.destination);
+            );
+            const processorURL = chrome.runtime.getURL('random-noise-processor.js');
+            await audioContext.audioWorklet.addModule(processorURL);
+            const randomNoiseNode = new AudioWorkletNode(
+                audioContext,
+                "random-noise-processor"
+            );
+            stream2audioContext.connect(gainNode);
+            //gainNode.connect(randomNoiseNode);
+
+            gainNode.connect(audioContext.destination);
+
+            const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const results = nums.map(n => {
+              const tensors = [];
+              const start = performance.now();
+              for (let i = 0; i < 100; i++) {
+                const real = tf.ones([10, n * 10]);
+                const imag = tf.ones([10, n * 10]);
+                const input = tf.complex(real, imag);
+                const res = tf.spectral.fft(input);
+                res.dataSync();
+              }
+              return performance.now() - start;
+            });
+            console.log(results);
               
         }
         sendResponse({farewell: "goodbye"});

@@ -22,9 +22,16 @@
 	"content_scripts": [
 		{
 			"matches": ["https://*/*", "http://*/*"],
+			"run_at": "document_end",
 			"js": ["content.js"]
 		}
 	],
+	 "web_accessible_resources": [{
+		"resources": ["random-noise-processor.js"],
+		"matches": ["https://*/*", "http://*/*"]
+	 }
+    	
+  	],
 	"action": {
 		"default_title": "Audio Denoise",
 		"default_popup": "popup.html"

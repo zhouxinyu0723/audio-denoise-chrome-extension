@@ -7,6 +7,27 @@ chrome.tabs.query(
 });   
 
 
+            // const stream = await navigator.mediaDevices.getUserMedia({
+            //     video: {
+            //       mandatory: {
+            //         chromeMediaSource: 'screen',
+            //         chromeMediaSourceId: streamId,
+            //       },
+            //     },
+            //     audio: {
+            //       mandatory: {
+            //         chromeMediaSource: 'desktop',
+            //         chromeMediaSourceId: streamId,
+            //       },
+            //     },
+            //   });
+            
+            //   stream.removeTrack(stream.getVideoTracks()[0]);
+            //   console.log(stream.getTracks())
+            //   console.log(stream.getTracks()[0]);
+            //   console.log(stream.getTracks()[0].getSettings());
+
+
 chrome.tabCapture.getMediaStreamId({targetTabId:tabId}, (c) => {
         console.log(c)
         console.log("got media stream id");

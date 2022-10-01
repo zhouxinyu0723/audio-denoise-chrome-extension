@@ -7,7 +7,8 @@
 		"storage",
 		"tabs",
 		"activeTab",
-		"tabCapture"
+		"desktopCapture",
+		"scripting"
     ],
 	"icons": {
 		"16": "logo/logo16.png",
@@ -15,15 +16,15 @@
 		"64": "logo/logo64.png",
 		"128": "logo/logo128.png"
 	},
+	"background": {
+		"service_worker": "background.js"	
+	},
 	"content_scripts": [
 		{
 			"matches": ["https://*/*", "http://*/*"],
 			"js": ["content.js"]
 		}
 	],
-	"background": {
-		"service_worker": "background.js"	
-	},
 	"action": {
 		"default_title": "Audio Denoise",
 		"default_popup": "popup.html"

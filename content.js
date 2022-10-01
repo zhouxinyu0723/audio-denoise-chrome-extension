@@ -1,46 +1,49 @@
-console.log("content.js starts");
-
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
 chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-            console.log(sender.tab ?
-                        "from a content script:" + sender.tab.url :
-                        "from the extension");
-            console.log()
-            if (request.command === "streamId_messaging"){
-                console.log("get stream id: ", request.streamId);
+    async function(request, sender, sendResponse) {
+        console.log(sender.tab ?
+                    "from a content script:" + sender.tab.url :
+                    "from the extension");
+        console.log()
+        if (request.command === "background2content_streamId"){
+            console.log("background2content streamId success: ", request.streamId);
 
-                // chrome.tabCapture.capture({audio: true, video: false},(c) => {
-                //     console.log("captured")
-                //     console.log(c)
-                // });
-                // audioContext = new AudioContext();
 
-                navigator.mediaDevices.getUserMedia({
-                    video: false,
-                    audio: true,
-                    audio: {
-                        mandatory: {
-                            chromeMediaSource: 'tab',
-                            chromeMediaSourceId: request.streamId
-                        }
-                    }
-                })
-                .then((stream) => {
-                    //console.log(stream)
-                    //manipulate_stream(stream)
-
-                    audioContext = new AudioContext();
-                    stream2audioContext = audioContext.createMediaStreamSource(stream);
-                    stream2audioContext.connect(audioContext.destination);
-                    
-                    // const video = document.querySelector('audio');
-                    // video.onloadedmetadata = (e) => {
-                    //     video.play();
-                    //   };
-
-                    //console.log("caputured")
+            streamId = request.streamId;
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                  mandatory: {
+                    chromeMediaSource: 'screen',
+                    chromeMediaSourceId: streamId,
+                  },
+                },
+                audio: {
+                  mandatory: {
+                    chromeMediaSource: 'desktop',
+                    chromeMediaSourceId: streamId,
+                  },
+                },
+              });
+              stream.removeTrack(stream.getVideoTracks()[0]);
+              console.log(stream.getTracks())
+              console.log(stream.getTracks()[0]);
+              console.log(stream.getTracks()[0].getSettings());
+              //
+              audioContext = new AudioContext({
+                latencyHint: 'interactive',
+                sampleRate: 48000,
                 });
-            }
-            sendResponse({farewell: "goodbye"});
+              audioContext.latencyHint = "playback";
+              stream2audioContext = audioContext.createMediaStreamSource(stream);
+              gainNode = audioContext.createGain();
+              gainNode.gain.setValueAtTime(
+                -1,
+                audioContext.currentTime
+              );
+              stream2audioContext.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              
         }
-    ); 
+        sendResponse({farewell: "goodbye"});
+    }
+); 

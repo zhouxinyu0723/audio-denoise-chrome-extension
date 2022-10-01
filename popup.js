@@ -29,15 +29,6 @@ document.addEventListener(
                         console.log(response.farewell);
                     });
 
-                    tabId = tabs[0].id
-                    console.log("try to get streamid of tab ", tabId);
-                    chrome.tabCapture.getMediaStreamId({consumerTabId: tabId}, (c) => {
-                        console.log(c)
-                        console.log("got media stream id:", c);
-                        chrome.tabs.sendMessage(tabId, {command: "streamId_messaging", streamId: c, tabId: tabId}, function(response) {
-                            console.log(response.farewell);
-                        });
-                    });
                 });
             }
         });

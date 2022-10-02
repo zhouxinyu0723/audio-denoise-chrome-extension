@@ -17,6 +17,9 @@ export class DenoiseFlow{
         this.buffer1 = new CyclicBuffer(buffer1Size,()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
         this.buffer2 = new CyclicBuffer(buffer2Size,()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
         this.sort_avg_buffer = Array.from({length:buffer2Size},()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
+
+        this.noiseCount = 0;
+        this.totalCount = 0;
     }
     process(input, output, param, cancel=true){
         this.inputBuffer.push_array(input, true);
@@ -34,6 +37,7 @@ export class DenoiseFlow{
             // save noise frames
             if (frame_fft_info.totaPow < this.volEst/140){
                 // console.log("catch a noise")
+                this.noiseCount ++;
                 let old_frame = this.buffer1.read();
                 this.buffer1.write(frame_fft_info);
                 this.buffer2.write(old_frame);
@@ -69,6 +73,8 @@ export class DenoiseFlow{
             this.outputBuffer.clean(this.frameSize);
             this.outputBuffer.add_array(frame_time_rebuild);
             this.outputBuffer.increase_write_pointer(this.frameShift);
+
+            this.totalCount ++;
         }
         // retrieve processed data
 

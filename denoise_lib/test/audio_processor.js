@@ -37,6 +37,8 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
   report(){
     console.log(this.denoiseFlowC1.volEst)
     console.log(this.denoiseFlowC2.volEst)
+    console.log(this.denoiseFlowC1.noiseCount);
+    console.log(this.denoiseFlowC1.totalCount);
   }
 }
   

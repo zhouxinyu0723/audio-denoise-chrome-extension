@@ -22,18 +22,18 @@ async function config_audio(){
     sampleRate: 48000,
     });
     const stream2audioContext = audioContext.createMediaElementSource(stream);
-    const gainNode = audioContext.createGain();
-    gainNode.gain.setValueAtTime(
-        0.1,
-        audioContext.currentTime
-    );
+    // const gainNode = audioContext.createGain();
+    // gainNode.gain.setValueAtTime(
+    //     1,
+    //     audioContext.currentTime
+    // );
     const processorURL = chrome.runtime.getURL('denoise_lib/de-noise-processor.js');
+    console.log(processorURL)
     await audioContext.audioWorklet.addModule(processorURL);
-    const randomNoiseNode = new AudioWorkletNode(
+    const deNoiseNode = new AudioWorkletNode(
         audioContext,
-        "random-noise-processor"
+        "de_noise_processor"
     );
-    stream2audioContext.connect(gainNode);
-    gainNode.connect(randomNoiseNode);
-    randomNoiseNode.connect(audioContext.destination);
+    stream2audioContext.connect(deNoiseNode);
+    deNoiseNode.connect(audioContext.destination);
 }

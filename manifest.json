@@ -34,7 +34,11 @@
 			"denoise_lib/track_buffer.js",
 			"denoise_lib/cyclic_buffer.js",
 			"denoise_lib/to_be_imported.js",
-			"denoise_lib/random-noise-processor.js",
+			"denoise_lib/cyclic_buffer.js",
+			"denoise_lib/track_buffer.js",
+			"denoise_lib/denoise_algorithm.js",
+			"denoise_lib/denoise_flow.js",
+			"denoise_lib/de-noise-processor.js"
 
 					],
 		"matches": ["https://*/*", "http://*/*"]

@@ -497,7 +497,8 @@ export function time2freqP_1frame(input, hanning_window){
     }
     let freqPow = freq.power();
     let freqAng = freq.angle();
-    let totaPow = freqPow.reduce((partialSum, e) => partialSum + e, 0);
+    let totaPow = freqPow.slice(300,4096).reduce((partialSum, e) => partialSum + e, 0);
+    // console.log(totaPow)
     return {
         freqAng: freqAng,
         freqPow: freqPow,
@@ -571,9 +572,9 @@ export class DenoiseFlow{
             let noisePower = this.sort_avg_buffer.slice(this.sort_low, this.sort_high).reduce((acc, e)=>{
                 return {freqPow: addVector(acc.freqPow, e.freqPow)}
             },time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0));
-            let scale = -0.7/(this.sort_high - this.sort_low);
+            let scale = -1/(this.sort_high - this.sort_low);
             noisePower = mulVectorScala(noisePower.freqPow, scale);
-            this.noiseEst = noisePower.reduce((acc, e)=>acc+e,0)
+            this.noiseEst = noisePower.slice(300,4096).reduce((acc, e)=>acc+e,0)
             // cancel noise
             let freqPower;
             if (cancel){

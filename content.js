@@ -7,23 +7,6 @@ chrome.runtime.onMessage.addListener(
         if (request.greeting === "hello"){
 
             config_audio();
-            
-
-
-            const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-            const results = nums.map(n => {
-              const tensors = [];
-              const start = performance.now();
-              for (let i = 0; i < 100; i++) {
-                const real = tf.ones([10, n * 10]);
-                const imag = tf.ones([10, n * 10]);
-                const input = tf.complex(real, imag);
-                const res = tf.spectral.fft(input);
-                res.dataSync();
-              }
-              return performance.now() - start;
-            });
-            console.log(results);
               
         }
         sendResponse({farewell: "goodbye"});
@@ -51,6 +34,6 @@ async function config_audio(){
         "random-noise-processor"
     );
     stream2audioContext.connect(gainNode);
-    //gainNode.connect(randomNoiseNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(randomNoiseNode);
+    randomNoiseNode.connect(audioContext.destination);
 }

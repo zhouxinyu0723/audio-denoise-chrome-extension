@@ -27,7 +27,8 @@
 		}
 	],
 	 "web_accessible_resources": [{
-		"resources": ["denoise_lib/random-noise-processor.js"],
+		"resources": ["denoise_lib/random-noise-processor.js",
+					  "denoise_lib/to_be_imported.js"],
 		"matches": ["https://*/*", "http://*/*"]
 	 }
     	

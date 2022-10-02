@@ -8,6 +8,9 @@ export function hanning_window(window_size){
 export function mulVector(a,b){
     return a.map((e,i) => e * b[i]);
 }
+export function mulVectorScala(a,b){
+    return a.map((e) => e * b);
+}
 export function addVector(a,b){
     return a.map((e,i) => e + b[i]);
 }

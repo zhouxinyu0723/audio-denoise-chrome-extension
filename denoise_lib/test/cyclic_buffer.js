@@ -1,7 +1,7 @@
 export class CyclicBuffer{
     constructor(length, item_init_func){
         this.buffer_size = length;
-        this.buffer = Array.from({length: this.length},item_init_func)
+        this.buffer = Array.from({length: this.buffer_size},item_init_func)
         this.buffer_pointer = 0;
     }
     swap(new_item){

@@ -71,13 +71,16 @@ export default class ComplexArray {
   angle() {
     const angles = new this.ArrayType(this.length);
     this.forEach((value, i) => {
-      if (value.real > 0){
-        angles[i] = Math.atan(value.imag / value.real);
+      if (value.real == 0 && value.imag == 0){
+        angles[i] = Math.random()*Math.PI*2;
       }else{
-        angles[i] = Math.PI + Math.atan(value.imag / value.real);
+        if (value.real > 0){
+          angles[i] = Math.atan(value.imag / value.real);
+        }else{
+          angles[i] = Math.PI + Math.atan(value.imag / value.real);
+        }
       }
     })
-
     return angles;
   }
 }

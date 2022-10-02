@@ -4,6 +4,7 @@ import * as fft from '../jsfft-master/lib/fft.js';
 import {hanning_window, time2freqP_1frame, sumVectors, freq2time_1frame} from './denoise_algorithm.js'
 import {TrackBuffer} from './track_buffer.js'
 import {CyclicBuffer} from './cyclic_buffer.js'
+import {DenoiseFlow} from './denoise_flow.js'
 let frame_size = 8092
 // test hanning window
 console.log("test hanning window: ", 0)
@@ -59,6 +60,29 @@ cyclicBuffer.swap(4);
 cyclicBuffer.swap(5);
 console.log(cyclicBuffer.buffer);
 console.log(cyclicBuffer.read());
+// test denoise flow
+console.log("======== test denoise flow ========")
+let denoiseFlow1 = new DenoiseFlow(4, 2, 3, 3, 3, 0, 3)
+for (let i = 0; i < 1; i++) {
+    denoiseFlow1.process([1],[0],0)
+}
+console.log(denoiseFlow1)
+//
+let denoiseFlow2 = new DenoiseFlow(4, 2, 3, 3, 3, 0, 3)
+for (let i = 0; i < 8; i++) {
+    denoiseFlow2.process([1],[0],0)
+}
+console.log(denoiseFlow2)
+//
+let denoiseFlow3 = new DenoiseFlow(4, 2, 3, 3, 3, 0, 3)
+for (let i = 0; i < 32; i++) {
+    if (i==10)
+    denoiseFlow3.process([0],[0],0)
+    else
+    denoiseFlow3.process([10],[0],0)
+}
+console.log(denoiseFlow3)
+console.log("==== test denoise flow finish ====")
 // test finished
 console.log("test finished")
 //////////// end 

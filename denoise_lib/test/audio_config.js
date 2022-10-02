@@ -21,7 +21,7 @@ async function play(){
     track.connect(randomNoiseNode);
     randomNoiseNode.connect(audioContext.destination);
 
-    track.connect(audioContext.destination);
+    //track.connect(audioContext.destination);
     audioElement.play();
 }
 

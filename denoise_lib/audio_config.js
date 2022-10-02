@@ -11,7 +11,7 @@ async function play(){
     const track = audioContext.createMediaElementSource(audioElement);
 
     // create processor
-    await audioContext.audioWorklet.addModule("http://127.0.0.1:5500/audio_processor.js");
+    await audioContext.audioWorklet.addModule("http://127.0.0.1:5500/denoise_lib/test/audio_processor.js");
     const randomNoiseNode = new AudioWorkletNode(
         audioContext,
         "audio_processor"

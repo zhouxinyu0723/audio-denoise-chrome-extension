@@ -27,7 +27,7 @@ async function config_audio(){
         0.1,
         audioContext.currentTime
     );
-    const processorURL = chrome.runtime.getURL('denoise_lib/random-noise-processor.js');
+    const processorURL = chrome.runtime.getURL('denoise_lib/de-noise-processor.js');
     await audioContext.audioWorklet.addModule(processorURL);
     const randomNoiseNode = new AudioWorkletNode(
         audioContext,

@@ -27,8 +27,16 @@
 		}
 	],
 	 "web_accessible_resources": [{
-		"resources": ["denoise_lib/random-noise-processor.js",
-					  "denoise_lib/to_be_imported.js"],
+		"resources": [
+
+			"denoise_lib/jsfft-master/lib/complex_array.js",
+			"denoise_lib/jsfft-master/lib/fft.js",
+			"denoise_lib/track_buffer.js",
+			"denoise_lib/cyclic_buffer.js",
+			"denoise_lib/to_be_imported.js",
+			"denoise_lib/random-noise-processor.js",
+
+					],
 		"matches": ["https://*/*", "http://*/*"]
 	 }
     	

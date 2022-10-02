@@ -1,8 +1,8 @@
-//import {DenoiseFlow} from "./denoise_flow.js"
+import {DenoiseFlow} from "./denoise_flow.js"
 class DeNoiseProcessor extends AudioWorkletProcessor {
 
-  // denoiseFlowC1 = new DenoiseFlow();
-  // denoiseFlowC2 = new DenoiseFlow();
+  denoiseFlowC1 = new DenoiseFlow();
+  denoiseFlowC2 = new DenoiseFlow();
 
   process(inputs, outputs, parameters) {
 
@@ -28,4 +28,4 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
   }
 }
   
-registerProcessor("audio_processor", DeNoiseProcessor);
+registerProcessor("denoise_processor", denoise_processor);

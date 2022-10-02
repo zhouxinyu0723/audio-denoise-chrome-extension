@@ -6,6 +6,37 @@ export class TrackBuffer
         this.buffer_write_pointer = 0;
         this.buffer_read_pointer = length;
         this.buffer_write_p_min_read_p = 0;
+
+        this.buffer_clean_pointer = 0;
+    }
+    set_clean_p_ahead_write_p(ahead){
+        this.buffer_clean_pointer = this.buffer_write_pointer + ahead;
+        if (this.buffer_clean_pointer >= this.buffer_size){
+            this.buffer_clean_pointer -= this.buffer_size;
+        }
+    }
+    clean(size){
+        // console.log("not cleaned buffer", this.buffer)
+        // console.log("clean from:", this.buffer_clean_pointer)
+        if (size <= this.buffer_size - this.buffer_clean_pointer){
+            for (let i = 0; i < size; i++) {
+                // console.log("zero",i)
+                this.buffer[i + this.buffer_clean_pointer] = 0;
+                // console.log(this.buffer)
+            }
+        }else{
+            for (let i = 0; i < this.buffer_size - this.buffer_clean_pointer; i++) {
+                // console.log("first",i)
+                this.buffer[i + this.buffer_clean_pointer] = 0;
+                // console.log(this.buffer)
+            }
+            for (let i = 0; i < size - this.buffer_size + this.buffer_clean_pointer; i++) {
+                // console.log("second",i)
+                this.buffer[i] = 0;
+                // console.log(this.buffer)
+            }
+        }
+        // console.log("cleaned buffer", this.buffer)
     }
     push_item(item){
         this.buffer[this.buffer_write_pointer] = item;
@@ -44,7 +75,7 @@ export class TrackBuffer
                 // console.log(this.buffer)
             })
         }
-        if (increase){
+        if (increase == true){
             this.buffer_write_p_min_read_p += array.length;
             console.log()
             this.buffer_write_pointer += array.length;
@@ -75,7 +106,7 @@ export class TrackBuffer
                 // console.log(this.buffer)
             })
         }
-        if (increase){
+        if (increase == true){
             this.buffer_write_p_min_read_p += array.length;
             this.buffer_write_pointer += array.length;
             if (this.buffer_write_pointer >= this.buffer_size){
@@ -101,7 +132,7 @@ export class TrackBuffer
         }
         return item;
     }
-    read_array(size,update_pointer = false){
+    read_array(size,increase = false){
         // if (size > this.buffer_size - this.buffer_write_p_min_read_p){
         //     console.error("No data to read. amount ask to read: ",size, " amound in the trace buffer: ", this.buffer_size - this.buffer_write_p_min_read_p);
         // }
@@ -125,7 +156,7 @@ export class TrackBuffer
                 // console.log(result)  
             });
         }
-        if (update_pointer){
+        if (increase == true){
             this.buffer_write_p_min_read_p -= array.length;
             this.buffer_read_pointer += size;
             if (this.buffer_read_pointer >= this.buffer_size){

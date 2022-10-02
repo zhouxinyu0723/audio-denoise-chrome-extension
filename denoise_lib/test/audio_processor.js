@@ -1,8 +1,10 @@
-//import {DenoiseFlow} from "./denoise_flow.js"
+import {DenoiseFlow} from "./denoise_flow.js"
+import {freq2time_1frame} from "./denoise_algorithm.js"
 class DeNoiseProcessor extends AudioWorkletProcessor {
 
-  // denoiseFlowC1 = new DenoiseFlow();
-  // denoiseFlowC2 = new DenoiseFlow();
+  denoiseFlowC1 = new DenoiseFlow();
+  denoiseFlowC2 = new DenoiseFlow();
+  j = 0;
 
   process(inputs, outputs, parameters) {
 
@@ -12,19 +14,29 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
     let inputC2 = inputT[1];
     let outputC1 = outputT[0];
     let outputC2 = outputT[1];
-    // this.denoiseFlowC1.process(inputC1, outputC1, parameters);
-   // this.denoiseFlowC2.process(inputC2, outputC2, parameters);
+    if(this.j<=30000){
+      this.denoiseFlowC1.process(inputC1, outputC1, parameters, 1);
+      this.denoiseFlowC2.process(inputC2, outputC2, parameters, 1);
+    }else{    
+      this.denoiseFlowC1.process(inputC1, outputC1, parameters, 0);
+      this.denoiseFlowC2.process(inputC2, outputC2, parameters, 0);
+    }
+
     // report
-    outputC1 = inputC1
-    outputC2 = inputC2
     this.j = this.j+1;
-    if(this.j%2000 ==10){
+    if(this.j%2000 ==1000){
       console.log("-------- audio process report. ---------")
       console.log(this.j);
-      console.log(inputC1)
+      this.report()
+      // debugger;
       console.log("----- audio process report finish. -----")
     }
     return true;
+  }
+
+  report(){
+    console.log(this.denoiseFlowC1.volEst)
+    console.log(this.denoiseFlowC2.volEst)
   }
 }
   

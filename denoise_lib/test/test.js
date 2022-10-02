@@ -16,7 +16,7 @@ time.map((e,i)=>{
     e.real = data1[i]; 
     e.imag = 0; 
     return e;})
-console.log('origin data: ', time)
+console.log('origin data: ', data1)
 let freq_info = time2freqP_1frame(data1, 0);
 console.log('freq data: ',freq_info)
 let time_re = freq2time_1frame(freq_info.freqPow, freq_info.freqAng, 0);
@@ -50,14 +50,19 @@ console.log(trackBuffer.buffer);
 console.log(trackBuffer.read_array(1),trackBuffer.read_array(2),trackBuffer.read_array(3),trackBuffer.read_array(4),trackBuffer.read_array(5));
 trackBuffer.increase_read_pointer(3);
 console.log(trackBuffer.read_array(1),trackBuffer.read_array(2),trackBuffer.read_array(3),trackBuffer.read_array(4),trackBuffer.read_array(5));
+trackBuffer.clean(2);
+console.log(trackBuffer)
+trackBuffer.set_clean_p_ahead_write_p(3)
+trackBuffer.clean(2);
+console.log(trackBuffer)
 //test cyclic buffer
 console.log("test cyclic buffer");
 const cyclicBuffer = new CyclicBuffer(4,()=>{0});
-cyclicBuffer.swap(1);
-cyclicBuffer.swap(2);
-cyclicBuffer.swap(3);
-cyclicBuffer.swap(4);
-cyclicBuffer.swap(5);
+cyclicBuffer.write(1);
+cyclicBuffer.write(2);
+cyclicBuffer.write(3);
+cyclicBuffer.write(4);
+cyclicBuffer.write(5);
 console.log(cyclicBuffer.buffer);
 console.log(cyclicBuffer.read());
 // test denoise flow

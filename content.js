@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener(
 
 
 async function config_audio(){
-    if(my_obj.audioContext){
+    if(my_obj.deNoiseNode){
         // my_obj.stream2audioContext.disconnect();
         // my_obj.stream2audioContext.connect(my_obj.deNoiseNode);
         // my_obj.deNoiseNode.connect(my_obj.audioContext.destination);
@@ -57,29 +57,34 @@ async function config_audio(){
         cancel_activate.setValueAtTime(true, my_obj.audioContext.currentTime);
     }else{
         my_obj.stream = document.querySelector("video")
-        console.log("get video element:", my_obj.stream)
-        my_obj.audioContext = new AudioContext({
-        latencyHint: 'playback',
-        sampleRate: 48000,
-        });
-        my_obj.stream2audioContext = my_obj.audioContext.createMediaElementSource(my_obj.stream);
+        console.log(my_obj.stream)
+        if (my_obj.stream){
+            console.log("get video element:", my_obj.stream)
+            my_obj.audioContext = new AudioContext({
+            latencyHint: 'playback',
+            sampleRate: 48000,
+            });
+            my_obj.stream2audioContext = my_obj.audioContext.createMediaElementSource(my_obj.stream);
 
-        const processorURL = chrome.runtime.getURL('denoise_lib/de-noise-processor.js');
-        console.log(processorURL)
-        await my_obj.audioContext.audioWorklet.addModule(processorURL);
-        my_obj.deNoiseNode = new AudioWorkletNode(
-            my_obj.audioContext,
-            "de_noise_processor"
-        );
+            const processorURL = chrome.runtime.getURL('denoise_lib/de-noise-processor.js');
+            console.log(processorURL)
+            await my_obj.audioContext.audioWorklet.addModule(processorURL);
+            my_obj.deNoiseNode = new AudioWorkletNode(
+                my_obj.audioContext,
+                "de_noise_processor"
+            );
 
-        my_obj.stream2audioContext.connect(my_obj.deNoiseNode);
-        my_obj.deNoiseNode.connect(my_obj.audioContext.destination);
+            my_obj.stream2audioContext.connect(my_obj.deNoiseNode);
+            my_obj.deNoiseNode.connect(my_obj.audioContext.destination);
+        }
     }
 }
 
 const closeAudio = () => {
+    if (my_obj.deNoiseNode){
     const cancel_activate = my_obj.deNoiseNode.parameters.get("cancel_activate");
     cancel_activate.setValueAtTime(false, my_obj.audioContext.currentTime);
+    }
     // if (my_obj.audioContext) {
     //     my_obj.stream2audioContext.disconnect();
     //     my_obj.deNoiseNode.disconnect();

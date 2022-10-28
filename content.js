@@ -94,7 +94,7 @@ async function config_audio(){
             my_obj.deNoiseNode.connect(my_obj.audioContext.destination);
             return true;
         }
-        alert("no video content found.")
+        alert("No video content is found on this page.")
         return false;
     }
 }

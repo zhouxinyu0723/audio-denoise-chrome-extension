@@ -44,6 +44,22 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
     ];
   }
 
+  check_not_all_zero(arr){
+    if (arr[0]!==0){
+      return true
+    }
+    if (arr[16]!==0){
+      return true
+    }
+    if (arr[32]!==0){
+      return true
+    }
+    if (arr[64]!==0){
+      return true
+    }
+    // return arr.some(item => item !== 0);
+  }
+
   process(inputs, outputs, parameters) {
 
     let inputT = inputs[0];
@@ -54,8 +70,17 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
     let outputC2 = outputT[1];
     // if(this.j<=30000){
     if (parameters["cancel_activate"][0]){
-    this.denoiseFlowC1.process(inputC1, outputC1, parameters);
-    this.denoiseFlowC2.process(inputC2, outputC2, parameters);
+
+      if (this.check_not_all_zero(inputC1)){
+        // only process if there is sound input
+        this.denoiseFlowC1.process(inputC1, outputC1, parameters);
+      }
+
+      if (this.check_not_all_zero(inputC2)){
+        // only process if there is sound input
+        this.denoiseFlowC2.process(inputC2, outputC2, parameters);
+      }
+
     }else{
       inputC1.forEach((e,i) => {outputC1[i] = e;});
       inputC2.forEach((e,i) => {outputC2[i] = e;});

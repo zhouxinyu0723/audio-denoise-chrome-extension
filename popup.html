@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<style>
+    input[type=checkbox] {
+        width: 20px;
+        height: 20px;
+    }
+  </style>
 <head>
     <script src="popup.js"></script>
     <title>Audio Denoise</title>
@@ -6,7 +12,8 @@
 
 <body>
     <!-- Rounded switch -->
-    <p>Activated <input id="activated" value="0" type="checkbox"></p>
+
+    <p>Activated     <input id="activated" value="0" type="checkbox" class="larger"></p>
     Denoise  scale <span id="denoise_scale_result"></span> <input id="denoise_scale" type="range" min="0" max="5" step="0.01" value="1.2" class="slider" disabled="true">
     Noise estimate <span id="noise_upper_bound_result"></span> <input id="noise_upper_bound" type="range" min="0" max="30" step="0.1" value="3" class="slider" disabled="true">
     <!-- canceled_power left % <input id="canceled_power_left" type="range" min="0" max="100" step="1" value="0" class="slider" >

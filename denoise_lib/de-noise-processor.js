@@ -45,19 +45,20 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
   }
 
   check_not_all_zero(arr){
-    if (arr[0]!==0){
-      return true
-    }
-    if (arr[16]!==0){
-      return true
-    }
-    if (arr[32]!==0){
-      return true
-    }
-    if (arr[64]!==0){
-      return true
-    }
+    // if (arr[0]!==0){
+    //   return true
+    // }
+    // if (arr[16]!==0){
+    //   return true
+    // }
+    // if (arr[32]!==0){
+    //   return true
+    // }
+    // if (arr[64]!==0){
+    //   return true
+    // }
     // return arr.some(item => item !== 0);
+    return arr.slice(0,16).some(item => item !== 0);
   }
 
   process(inputs, outputs, parameters) {

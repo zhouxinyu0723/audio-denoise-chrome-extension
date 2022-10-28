@@ -16,14 +16,13 @@ export class DenoiseFlow{
         this.volEstBuffer = new CyclicBuffer(volEstBufferSize,()=>0)
         this.volEst = 0;
         this.buffer1 = new CyclicBuffer(buffer1Size,()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
-        this.buffer2 = new CyclicBuffer(buffer2Size,()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
         this.sort_avg_buffer = Array.from({length:buffer2Size},()=>{return time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0)})
 
         this.noiseEst = 0;
         this.noiseCount = 0;
         this.totalCount = 0;
     }
-    process(input, output, param, cancel=true){
+    process(input, output, param){
         this.inputBuffer.push_array(input, true);
         // process new data
         if (this.inputBuffer.buffer_write_p_min_read_p >= this.frameShift){
@@ -37,12 +36,10 @@ export class DenoiseFlow{
             // console.log(this.volEstBuffer.buffer.reduce((acc, e)=>acc+e,0))
             this.volEst =Math.max(this.volEst, volEst_update)*0.99;
             // save noise frames
-            if (this.volEst/10000 < frame_fft_info.totaPow && frame_fft_info.totaPow < this.volEst/30){
+            if (this.volEst/10000 < frame_fft_info.totaPow && frame_fft_info.totaPow < this.volEst * param['noise_upper_bound'][0]){
                 // console.log("catch a noise")
                 this.noiseCount ++;
-                let old_frame = this.buffer1.read();
                 this.buffer1.write(frame_fft_info);
-                this.buffer2.write(old_frame);
             }
             ///////// use noise estimation history to reduce noise
             // estimate noise power for each freq
@@ -52,12 +49,12 @@ export class DenoiseFlow{
             let noisePower = this.sort_avg_buffer.slice(this.sort_low, this.sort_high).reduce((acc, e)=>{
                 return {freqPow: addVector(acc.freqPow, e.freqPow)}
             },time2freqP_1frame(Array.from({length: this.frameSize},()=>{return 0;}), 0));
-            let scale = -1.2/(this.sort_high - this.sort_low);
+            let scale = -param['denoise_scale'][0]/(this.sort_high - this.sort_low);
             noisePower = mulVectorScala(noisePower.freqPow, scale);
             this.noiseEst = noisePower.reduce((acc, e)=>acc+e,0)//slice(300,4096).
             // cancel noise
             let freqPower;
-            if (cancel){
+            if (param['cancel_activate'][0]==1){
                 freqPower = addVector(frame_fft_info.freqPow, noisePower);
                 freqPower = freqPower.map((e)=>Math.max(0,e));
             }else{

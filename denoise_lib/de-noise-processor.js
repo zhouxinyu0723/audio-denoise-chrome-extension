@@ -3,9 +3,40 @@ import {DenoiseFlow} from "./denoise_flow.js"
 
 class DeNoiseProcessor extends AudioWorkletProcessor {
 
+  
   denoiseFlowC1 = new DenoiseFlow();
   denoiseFlowC2 = new DenoiseFlow();
   j = 0;
+
+
+  static get parameterDescriptors() {
+    return [
+      {
+        name: "noise_upper_bound",
+        defaultValue: 0.03,
+        minValue: 0,
+        maxValue: 1,
+      },
+      {
+        name: "cancel_activate",
+        defaultValue: 1,
+        minValue: 0,
+        maxValue: 1,
+      },
+      {
+        name: "denoise_scale",
+        defaultValue: 1.2,
+        minValue: 0,
+        maxValue: 5,
+      },
+      {
+        name: "canceled_power",
+        defaultValue: 0,
+        minValue: 0,
+        maxValue: 1,
+      },
+    ];
+  }
 
   process(inputs, outputs, parameters) {
 
@@ -17,26 +48,22 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
     let outputC2 = outputT[1];
     // if(this.j<=30000){
 
-    this.denoiseFlowC1.process(inputC1, outputC1, parameters, 1);
-    this.denoiseFlowC2.process(inputC2, outputC2, parameters, 1);
-    // }else{    
-    //   this.denoiseFlowC1.process(inputC1, outputC1, parameters, 0);
-    //   this.denoiseFlowC2.process(inputC2, outputC2, parameters, 0);
-    // }
+    this.denoiseFlowC1.process(inputC1, outputC1, parameters);
+    this.denoiseFlowC2.process(inputC2, outputC2, parameters);
 
     // report
     this.j = this.j+1;
     if(this.j%2000 ==1000){
       console.log("-------- audio process report. ---------")
       console.log(this.j);
-      this.report()
+      this.report(parameters)
       // debugger;
       console.log("----- audio process report finish. -----")
     }
     return true;
   }
 
-  report(){
+  report(parameters){
     console.log(this.denoiseFlowC1.noiseEst);
     console.log(this.denoiseFlowC1.volEst);
     console.log(this.denoiseFlowC1.noiseCount);
@@ -45,6 +72,7 @@ class DeNoiseProcessor extends AudioWorkletProcessor {
     console.log(this.denoiseFlowC2.volEst);
     console.log(this.denoiseFlowC2.noiseCount);
     console.log(this.denoiseFlowC2.totalCount);
+    console.log(parameters['denoise_scale'][0])
   }
 }
   

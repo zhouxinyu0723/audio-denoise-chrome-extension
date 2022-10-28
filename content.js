@@ -3,12 +3,20 @@ let my_obj = {}
 chrome.runtime.onMessage.addListener(
     async function(request, sender, sendResponse) {
         if (request.command === "check_activated"){
-            const activated = my_obj.deNoiseNode.parameters.get("cancel_activate");
-            sendResponse({value: activated.value});
+            if(my_obj.deNoiseNode){
+                const activated = my_obj.deNoiseNode.parameters.get("cancel_activate");
+                sendResponse({value: activated.value});
+            }else{
+                sendResponse({value: "not_defined"});
+            }
         }
         if (request.command === "check_denoise_scale"){
-            const denoise_scale = my_obj.deNoiseNode.parameters.get("denoise_scale");
-            sendResponse({value: denoise_scale.value});
+            if(my_obj.deNoiseNode){
+                const denoise_scale = my_obj.deNoiseNode.parameters.get("denoise_scale");
+                sendResponse({value: denoise_scale.value});
+            }else{
+                sendResponse({value: "not_defined"});
+            }
         }
 
         // if (request.command === "check_canceled_power"){
@@ -20,14 +28,20 @@ chrome.runtime.onMessage.addListener(
         // }
 
         if (request.command === "check_noise_upper_bound"){
-            const noise_upper_bound = my_obj.deNoiseNode.parameters.get("noise_upper_bound");
-            sendResponse({value: noise_upper_bound.value});
+            if(my_obj.deNoiseNode){
+                const noise_upper_bound = my_obj.deNoiseNode.parameters.get("noise_upper_bound");
+                sendResponse({value: noise_upper_bound.value});
+            }else{
+                sendResponse({value: "not_defined"});
+            }
         }
         if (request.command === "activating"){
-            config_audio();
+            result = config_audio();
+            sendResponse({value: result ? "success" : "fail"});
         }
         if (request.command === "deactivating"){
             closeAudio();
+            sendResponse({value: "success"});
         }
         if (request.command === "change_denoise_scale"){
             console.log("denoise_scale changed to" + request.value);
@@ -41,13 +55,14 @@ chrome.runtime.onMessage.addListener(
             noise_upper_bound.setValueAtTime(request.value, my_obj.audioContext.currentTime);
             sendResponse({value: "success"});
         }
-        sendResponse({farewell: "goodbye"});
+        
     }
 ); 
 
 
 
 async function config_audio(){
+    // return true means success
     if(my_obj.deNoiseNode){
         // my_obj.stream2audioContext.disconnect();
         // my_obj.stream2audioContext.connect(my_obj.deNoiseNode);
@@ -55,6 +70,7 @@ async function config_audio(){
 
         const cancel_activate = my_obj.deNoiseNode.parameters.get("cancel_activate");
         cancel_activate.setValueAtTime(true, my_obj.audioContext.currentTime);
+        return true;
     }else{
         my_obj.stream = document.querySelector("video")
         console.log(my_obj.stream)
@@ -76,7 +92,10 @@ async function config_audio(){
 
             my_obj.stream2audioContext.connect(my_obj.deNoiseNode);
             my_obj.deNoiseNode.connect(my_obj.audioContext.destination);
+            return true;
         }
+        alert("no video content found.")
+        return false;
     }
 }
 
